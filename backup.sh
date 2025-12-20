@@ -8,7 +8,7 @@
 #
 # backup functions
 #
-VERSION="1.01 (14-12-2024)"
+VERSION="1.02 (19-12-2025)"
 
 #
 # diskbackup [test] SRCDIR DSTDIR
@@ -134,9 +134,18 @@ rhostbackup () {
     # backup to/from remote host
 	SRCDIR=$1
 	DSTDIR=$2
-	
+
+  # in case of Firefox exclude 'storage'
+	RSYNCOPTS="$RSYNCOPTS --exclude=firefox/*/storage/"
+
+	# in case of Chrome exclude CacheStorage
+	RSYNCOPTS="$RSYNCOPTS --exclude=Service*Worker/CacheStorage/"
+
 	if ! ping -w 1 -c1 saentis > /dev/null 2>&1; then
 		echo "host not reachable, terminating"
+
+		set -x
+		rsync $RSYNCOPTS $SRCDIR/ $DSTDIR
 	else
 		set -x
 		rsync $RSYNCOPTS $SRCDIR/ $DSTDIR
@@ -181,7 +190,8 @@ if [ $# == 0 ]; then
 	echo "	backup from/to remote host:"
 	echo "		backup -r kathi@saentis:/home/kathi/Kathi /home/kathi/Kathi"
 	echo "		backup -r /home/ans/Andi ans@saentis:/home/ansAndi"
-	
+	echo "		backup -r /home/ans/Andi ans@saentis:/home/ansAndi"
+	echo "		backup -r /home/ans/snap/firefox/common/.mozilla ans@saentis:/home/ans/snap/firefox/common/.mozilla"
 	exit
 fi
 
