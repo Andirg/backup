@@ -8,7 +8,7 @@
 #
 # backup functions
 #
-VERSION="1.02 (19-12-2025)"
+VERSION="1.03 (10-01-2026)"
 
 #
 # diskbackup [test] SRCDIR DSTDIR
@@ -141,11 +141,8 @@ rhostbackup () {
 	# in case of Chrome exclude CacheStorage
 	RSYNCOPTS="$RSYNCOPTS --exclude=Service*Worker/CacheStorage/"
 
-	if ! ping -w 1 -c1 saentis > /dev/null 2>&1; then
+	if ! ping -w5 -c2 saentis > /dev/null 2>&1; then
 		echo "host not reachable, terminating"
-
-		set -x
-		rsync $RSYNCOPTS $SRCDIR/ $DSTDIR
 	else
 		set -x
 		rsync $RSYNCOPTS $SRCDIR/ $DSTDIR
@@ -170,6 +167,7 @@ BACKUPPATH="Backup"
 # print usage info
 if [ $# == 0 ]; then
     echo "Usage: `basename $0` [-b] [-n] [-d | -p | -r] [test] SRCDIR DSTDIR"
+	echo "	-v: print version info and exit"
 	echo "	-b: run in batch mode (used by cron)"
 	echo "	-n: do a dry run (nothing will be changed)"
 	echo "	-p: do a phone backup"
