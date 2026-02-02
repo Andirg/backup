@@ -8,7 +8,7 @@
 #
 # backup functions
 #
-VERSION="1.03 (10-01-2026)"
+VERSION="1.04 (01-02-2026)"
 
 #
 # diskbackup [test] SRCDIR DSTDIR
@@ -145,7 +145,7 @@ rhostbackup () {
 		echo "host not reachable, terminating"
 	else
 		set -x
-		rsync $RSYNCOPTS $SRCDIR/ $DSTDIR
+		rsync $RSYNCOPTS "$SRCDIR/" "$DSTDIR"
 	fi
 }
 
@@ -225,7 +225,7 @@ case "$1" in
 		;;
 
 	-r)
-		rhostbackup $2 $3
+		rhostbackup "$2" "$3"
 		;;
 
 	*)
