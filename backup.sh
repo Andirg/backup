@@ -8,7 +8,7 @@
 #
 # backup functions
 #
-VERSION="1.04 (01-02-2026)"
+VERSION="1.04 (07-02-2026)"
 
 #
 # diskbackup [test] SRCDIR DSTDIR
@@ -135,11 +135,16 @@ rhostbackup () {
 	SRCDIR=$1
 	DSTDIR=$2
 
+	echo "synchronizing `basename "$SRCDIR"`"
+
   # in case of Firefox exclude 'storage'
 	RSYNCOPTS="$RSYNCOPTS --exclude=firefox/*/storage/"
 
 	# in case of Chrome exclude CacheStorage
 	RSYNCOPTS="$RSYNCOPTS --exclude=Service*Worker/CacheStorage/"
+
+	# in case of Chromium exclude Cache and Code Cache
+	RSYNCOPTS="$RSYNCOPTS --exclude=*Cache/"
 
 	if ! ping -w5 -c2 saentis > /dev/null 2>&1; then
 		echo "host not reachable, terminating"
@@ -201,7 +206,7 @@ fi
 
 echo
 echo "-------------------------------------------------------------------------------"
-echo "backup started: `date`"
+echo "backup $VERSION started: `date`"
 
 # batch mode?
 if [ "$1" == "-b" ]; then
