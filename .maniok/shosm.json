@@ -1,0 +1,334 @@
+{
+  "configuration" : { },
+  "description" : "Description",
+  "documentation" : {
+    "sections" : [ {
+      "content" : "# Digital Map Utility – Architecture Overview\n\n## 1. Introduction\nThis document provides a high-level overview of the architecture for a digital map utility. The system allows users to enter a location and view it rendered on an Ordnance Survey (OS) map.\n\nThe solution integrates location lookup, coordinate transformation, and map rendering into a cohesive workflow that produces a browser-based HTML output.\n\n---\n\n## 2. System Overview\n\nAt a high level, the system performs the following steps:\n\n1. Accepts a location input from the user\n2. Resolves the location into geographic coordinates\n3. Converts coordinates into the Ordnance Survey grid system\n4. Generates an HTML page displaying the mapped location\n\n---\n\n## 3. Key Components\n\n### 3.1 User\n- Initiates the process by entering a location\n- Views the resulting map in a web browser\n\n---\n\n### 3.2 Web Application\n- Central orchestrator of the system\n- Handles user input and coordinates the workflow\n- Communicates with internal services and external systems\n- Returns the final HTML page to the user\n\n---\n\n### 3.3 Location Lookup Client\n- Responsible for resolving place names into geographic coordinates (latitude/longitude)\n- Communicates with an external location server via API calls\n- Abstracts external service interaction from the core application\n\n---\n\n### 3.4 Coordinate Transformation Service\n- Converts latitude/longitude into Ordnance Survey grid references\n- Encapsulates geospatial transformation logic\n- Ensures mapping compatibility with OS map data\n\n---\n\n### 3.5 Map Renderer\n- Generates the final HTML output\n- Embeds map tiles and overlays the requested location\n- Prepares content suitable for browser display\n\n---\n\n### 3.6 External Systems\n\n#### Location Server\n- Provides geocoding services (place name → coordinates)\n\n#### Ordnance Survey Map Service\n- Supplies map tiles or geospatial data required for rendering\n\n---\n\n## 4. Data Flow\n\nThe system follows a clear and sequential data flow:\nUser → Web Application\n→ Location Lookup Client → Location Server\n← Coordinates (lat/long)\n→ Coordinate Transformation Service\n← OS Grid Reference\n→ Map Renderer → OS Map Service\n← Map Tiles\n→ HTML Output → User\n\n---\n\n## 5. Design Considerations\n\n### Separation of Concerns\nEach component has a clearly defined responsibility:\n- Lookup (external data retrieval)\n- Transformation (geospatial logic)\n- Rendering (presentation)\n\n### Extensibility\nThe architecture allows for:\n- Swapping geocoding providers\n- Supporting additional map systems\n- Enhancing rendering (e.g., interactive maps)\n\n### Maintainability\n- Modular services simplify testing and updates\n- External dependencies are isolated\n\n---\n\n## 6. Potential Enhancements\n\n- **Caching**: Store frequently requested locations or map tiles\n- **Error Handling**: Graceful handling of failed lookups or API outages\n- **Client-Side Rendering**: Move rendering logic partially to the browser\n- **Scalability**: Deploy services independently in a cloud environment\n\n---\n\n## 7. Summary\n\nThis architecture cleanly separates responsibilities between lookup, transformation, and rendering while keeping the web application as a central coordinator. The result is a flexible and maintainable system capable of delivering map-based visualizations from simple user input.",
+      "format" : "Markdown",
+      "order" : 1,
+      "title" : ""
+    } ]
+  },
+  "id" : 0,
+  "model" : {
+    "people" : [ {
+      "description" : "Person entering a location to view on a map",
+      "id" : "1",
+      "name" : "User",
+      "properties" : {
+        "structurizr.dsl.identifier" : "user"
+      },
+      "relationships" : [ {
+        "description" : "Enters location query",
+        "destinationId" : "3",
+        "id" : "9",
+        "sourceId" : "1",
+        "tags" : "Relationship"
+      }, {
+        "description" : "Enters location query",
+        "destinationId" : "2",
+        "id" : "10",
+        "linkedRelationshipId" : "9",
+        "sourceId" : "1"
+      } ],
+      "tags" : "Element,Person"
+    } ],
+    "softwareSystems" : [ {
+      "containers" : [ {
+        "description" : "Handles user input, orchestrates processing, and generates HTML output",
+        "documentation" : { },
+        "id" : "3",
+        "name" : "Web Application",
+        "properties" : {
+          "structurizr.dsl.identifier" : "webApp"
+        },
+        "relationships" : [ {
+          "description" : "Requests coordinates for location",
+          "destinationId" : "4",
+          "id" : "11",
+          "sourceId" : "3",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Requests coordinate transformation",
+          "destinationId" : "5",
+          "id" : "16",
+          "sourceId" : "3",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Passes grid reference and map parameters",
+          "destinationId" : "6",
+          "id" : "18",
+          "sourceId" : "3",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Displays map in browser",
+          "destinationId" : "1",
+          "id" : "24",
+          "sourceId" : "3",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container",
+        "technology" : "Server-side application (e.g. Python, Node.js, Java)"
+      }, {
+        "description" : "Queries external location server to resolve place names to coordinates",
+        "documentation" : { },
+        "id" : "4",
+        "name" : "Location Lookup Client",
+        "properties" : {
+          "structurizr.dsl.identifier" : "lookupService"
+        },
+        "relationships" : [ {
+          "description" : "Calls geocoding API",
+          "destinationId" : "7",
+          "id" : "12",
+          "sourceId" : "4",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container",
+        "technology" : "HTTP client"
+      }, {
+        "description" : "Converts geographic coordinates into Ordnance Survey grid references",
+        "documentation" : { },
+        "id" : "5",
+        "name" : "Coordinate Transformation Service",
+        "properties" : {
+          "structurizr.dsl.identifier" : "transformService"
+        },
+        "relationships" : [ {
+          "description" : "Returns OS grid reference",
+          "destinationId" : "3",
+          "id" : "17",
+          "sourceId" : "5",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container",
+        "technology" : "Geospatial library/module"
+      }, {
+        "description" : "Generates HTML pages embedding Ordnance Survey map tiles",
+        "documentation" : { },
+        "id" : "6",
+        "name" : "Map Renderer",
+        "properties" : {
+          "structurizr.dsl.identifier" : "mapRenderer"
+        },
+        "relationships" : [ {
+          "description" : "Requests map tiles/data",
+          "destinationId" : "8",
+          "id" : "19",
+          "sourceId" : "6",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Returns generated HTML",
+          "destinationId" : "3",
+          "id" : "23",
+          "sourceId" : "6",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container",
+        "technology" : "HTML templating / frontend generation"
+      } ],
+      "description" : "Displays a user-entered location on an Ordnance Survey map",
+      "documentation" : { },
+      "id" : "2",
+      "name" : "Digital Map Utility",
+      "properties" : {
+        "structurizr.dsl.identifier" : "system"
+      },
+      "relationships" : [ {
+        "description" : "Calls geocoding API",
+        "destinationId" : "7",
+        "id" : "13",
+        "linkedRelationshipId" : "12",
+        "sourceId" : "2"
+      }, {
+        "description" : "Requests map tiles/data",
+        "destinationId" : "8",
+        "id" : "20",
+        "linkedRelationshipId" : "19",
+        "sourceId" : "2"
+      }, {
+        "description" : "Displays map in browser",
+        "destinationId" : "1",
+        "id" : "25",
+        "linkedRelationshipId" : "24",
+        "sourceId" : "2"
+      } ],
+      "tags" : "Element,Software System"
+    }, {
+      "description" : "External service providing geocoding (place name → coordinates)",
+      "documentation" : { },
+      "id" : "7",
+      "name" : "Location Server",
+      "properties" : {
+        "structurizr.dsl.identifier" : "locationServer"
+      },
+      "relationships" : [ {
+        "description" : "Returns lat/long",
+        "destinationId" : "4",
+        "id" : "14",
+        "sourceId" : "7",
+        "tags" : "Relationship"
+      }, {
+        "description" : "Returns lat/long",
+        "destinationId" : "2",
+        "id" : "15",
+        "linkedRelationshipId" : "14",
+        "sourceId" : "7"
+      } ],
+      "tags" : "Element,Software System"
+    }, {
+      "description" : "Provides map tiles or map data",
+      "documentation" : { },
+      "id" : "8",
+      "name" : "Ordnance Survey Map Service",
+      "properties" : {
+        "structurizr.dsl.identifier" : "osMapService"
+      },
+      "relationships" : [ {
+        "description" : "Returns map content",
+        "destinationId" : "6",
+        "id" : "21",
+        "sourceId" : "8",
+        "tags" : "Relationship"
+      }, {
+        "description" : "Returns map content",
+        "destinationId" : "2",
+        "id" : "22",
+        "linkedRelationshipId" : "21",
+        "sourceId" : "8"
+      } ],
+      "tags" : "Element,Software System"
+    } ]
+  },
+  "name" : "Name",
+  "properties" : {
+    "structurizr.inspection.error" : "22",
+    "structurizr.inspection.info" : "0",
+    "structurizr.inspection.ignore" : "0",
+    "structurizr.inspection.warning" : "0"
+  },
+  "views" : {
+    "configuration" : {
+      "branding" : { },
+      "styles" : { },
+      "terminology" : { },
+      "themes" : [ "https://static.structurizr.com/themes/default/theme.json" ]
+    },
+    "containerViews" : [ {
+      "automaticLayout" : {
+        "applied" : false,
+        "edgeSeparation" : 0,
+        "implementation" : "Graphviz",
+        "nodeSeparation" : 300,
+        "rankDirection" : "LeftRight",
+        "rankSeparation" : 300,
+        "vertices" : false
+      },
+      "elements" : [ {
+        "id" : "1",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "3",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "4",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "5",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "6",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "7",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "8",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "externalSoftwareSystemBoundariesVisible" : false,
+      "generatedKey" : true,
+      "key" : "Container-001",
+      "name" : "Container View: Digital Map Utility",
+      "order" : 2,
+      "relationships" : [ {
+        "id" : "11"
+      }, {
+        "id" : "12"
+      }, {
+        "id" : "14"
+      }, {
+        "id" : "16"
+      }, {
+        "id" : "17"
+      }, {
+        "id" : "18"
+      }, {
+        "id" : "19"
+      }, {
+        "id" : "21"
+      }, {
+        "id" : "23"
+      }, {
+        "id" : "24"
+      }, {
+        "id" : "9"
+      } ],
+      "softwareSystemId" : "2"
+    } ],
+    "systemContextViews" : [ {
+      "automaticLayout" : {
+        "applied" : false,
+        "edgeSeparation" : 0,
+        "implementation" : "Graphviz",
+        "nodeSeparation" : 300,
+        "rankDirection" : "LeftRight",
+        "rankSeparation" : 300,
+        "vertices" : false
+      },
+      "elements" : [ {
+        "id" : "1",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "2",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "7",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "8",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "enterpriseBoundaryVisible" : true,
+      "generatedKey" : true,
+      "key" : "SystemContext-001",
+      "name" : "System Context View: Digital Map Utility",
+      "order" : 1,
+      "relationships" : [ {
+        "id" : "10"
+      }, {
+        "id" : "13"
+      }, {
+        "id" : "15"
+      }, {
+        "id" : "20"
+      }, {
+        "id" : "22"
+      }, {
+        "id" : "25"
+      } ],
+      "softwareSystemId" : "2"
+    } ]
+  }
+}
